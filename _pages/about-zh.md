@@ -40,6 +40,11 @@ redirect_from:
 
 - **TODO 项目名。** 简要描述与技术栈。\[[code](#)\] \[[demo](#)\]
 
+简历
+======
+- 📄 [下载简历 (PDF)](/files/Yingsong_Ning_CV.pdf) — 最近一次更新 2026.04
+- 网页版见 [/cv/](/cv/)
+
 联系方式
 ======
 <!-- TODO -->

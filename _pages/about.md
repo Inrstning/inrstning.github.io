@@ -40,6 +40,11 @@ Selected Projects
 
 - **TODO Project.** Short description and what tech you used. \[[code](#)\] \[[demo](#)\]
 
+CV
+======
+- 📄 [Download CV (PDF)](/files/Yingsong_Ning_CV.pdf) — 中文版，最近一次更新 2026.04
+- See web version at [/cv/](/cv/)
+
 Contact
 ======
 <!-- TODO: 替换为真实邮箱 / 主页链接 -->

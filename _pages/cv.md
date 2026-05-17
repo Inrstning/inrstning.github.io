@@ -9,6 +9,8 @@ redirect_from:
 
 {% include base_path %}
 
+📄 **[Download PDF version](/files/Yingsong_Ning_CV.pdf)** — last updated 2026.04
+
 <!-- TODO: 替换为你的真实信息。Publications / Talks / Teaching 部分会从对应目录自动生成。 -->
 
 Education
