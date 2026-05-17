@@ -9,10 +9,10 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "default" # The available themes options are "default", "air", "sunrise", "mint", "dirt" and "contrast"
-title                    : "Yingsong Ning"   # TODO: 站点标题
+title                    : "Yingsong Ning"
 title_separator          : "-"
-name                     : &name "Yingsong Ning"   # TODO: 你的英文名
-description              : &description "Researcher in NLP / LLM / Reasoning."   # TODO: 一句研究方向简介
+name                     : &name "Yingsong Ning"
+description              : &description "M.S. student at Northeastern University. Working on LLM memory, retrieval, RL for LLMs, and temporal knowledge graph reasoning."
 url                      : https://inrstning.github.io
 baseurl                  : ""
 repository               : "Inrstning/inrstning.github.io"
@@ -22,14 +22,14 @@ repository               : "Inrstning/inrstning.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.jpg"   # TODO: 把头像放到 images/profile.jpg 后保留此值
-  name             : "Yingsong Ning"   # TODO: 侧边栏显示名
+  avatar           : "profile.jpg"   # TODO: 把头像放到 images/profile.jpg
+  name             : "Yingsong Ning"
   pronouns         :
-  bio              : "Master student, NLP / LLM / Reasoning."   # TODO: 简介
-  location         : "Beijing, China"   # TODO
-  employer         : "Your University"   # TODO: 学校 / 公司
+  bio              : "M.S. student @ NEU. NLP / LLM Memory / RL for LLMs / Temporal KG."
+  location         : "Beijing & Shenyang, China"
+  employer         : "Northeastern University; Baidu (NLP Intern)"
   uri              :
-  email            : "yourname@example.com"   # TODO: 邮箱
+  email            : "inrstning@gmail.com"
 
   # Academic websites
   academia         : # URL
