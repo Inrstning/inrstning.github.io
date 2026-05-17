@@ -9,56 +9,47 @@ redirect_from:
 
 {% include base_path %}
 
+<!-- TODO: 替换为你的真实信息。Publications / Talks / Teaching 部分会从对应目录自动生成。 -->
+
 Education
 ======
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
-* M.S. in Jekyll, GitHub University, 2014
-* B.S. in GitHub, GitHub University, 2012
+* M.S. in _Department_, _University_, 20XX – Present
+* B.S. in _Department_, _University_, 20XX – 20XX
 
 Work experience
 ======
-* Spring 2024: Academic Pages Collaborator
-  * GitHub University
-  * Duties includes: Updates and improvements to template
-  * Supervisor: The Users
+* **20XX.MM – 20XX.MM** — _Role_, _Company / Lab_
+  * _One-line summary of what you did_
+  * _Bullet about result, with a number if possible_
 
-* Fall 2015: Research Assistant
-  * GitHub University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
+* **20XX.MM – 20XX.MM** — _Role_, _Company / Lab_
+  * _Bullet_
 
-* Summer 2015: Research Assistant
-  * GitHub University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
-  
 Skills
 ======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+* _Skill area 1_
+* _Skill area 2_
+  * _Sub-skill_
+* _Skill area 3_
 
 Publications
 ======
   <ul>{% for post in site.publications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
-  
+
 Talks
 ======
   <ul>{% for post in site.talks reversed %}
     {% include archive-single-talk-cv.html  %}
   {% endfor %}</ul>
-  
+
 Teaching
 ======
   <ul>{% for post in site.teaching reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
-  
+
 Service and leadership
 ======
-* Currently signed in to 43 different slack teams
+* _Reviewer / Volunteer / Open-source contribution_
