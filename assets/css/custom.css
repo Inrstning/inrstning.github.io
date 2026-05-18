@@ -107,6 +107,16 @@ h2 { font-variation-settings: "opsz" 60; }
   z-index: 50;
 }
 [data-theme="dark"] .masthead { background: var(--paper); border-bottom-color: rgba(243,237,224,0.06); }
+.masthead .masthead__menu,
+.masthead .masthead__menu-item,
+.masthead .greedy-nav,
+.masthead .greedy-nav__toggle,
+.masthead .hidden-links { background: transparent; }
+.masthead .hidden-links {
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  box-shadow: 0 6px 20px rgba(20,17,15,0.08);
+}
 .masthead__inner-wrap { padding: 0.6em 2em; max-width: 1400px; }
 .masthead a, .masthead a:visited { color: var(--ink); background-image: none; }
 .greedy-nav { background: transparent; }
