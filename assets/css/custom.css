@@ -168,8 +168,13 @@ h2 { font-variation-settings: "opsz" 60; }
 #main.atelier-shell::before,
 #main.atelier-shell::after { content: none; display: none; }
 
-/* body padding adjustments on home pages (no bottom 9em gutter) */
+/* body padding adjustments on home pages (no bottom 9em gutter).
+   Also unfix .page__footer so it flows below the colophon instead of
+   overlaying content — academicpages pins it position:fixed bottom:0
+   and reserves space with body padding-bottom: 9em, which collides
+   with the atelier flow. */
 html:has(#main.atelier-shell) body { padding-bottom: 0; }
+html:has(#main.atelier-shell) .page__footer { position: static; }
 
 .atelier {
   max-width: 1280px;
