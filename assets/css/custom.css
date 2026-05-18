@@ -152,11 +152,29 @@ h2 { font-variation-settings: "opsz" 60; }
 
 /* =============================================================
    HOME LAYOUT — bypass sidebar, full editorial canvas
+   Neutralise the academicpages #main constraints (max-width, padding,
+   margin, intro animation) so the atelier owns the full canvas.
+   These selectors only match on the home page because home.html is the
+   only layout that gives #main the .atelier-shell class.
    ============================================================= */
+#main.atelier-shell {
+  max-width: none !important;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  clear: both;
+  animation: none;
+}
+#main.atelier-shell::before,
+#main.atelier-shell::after { content: none; display: none; }
+
+/* body padding adjustments on home pages (no bottom 9em gutter) */
+html:has(#main.atelier-shell) body { padding-bottom: 0; }
+
 .atelier {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem 8rem;
+  padding: 0 2rem 6rem;
   position: relative;
   z-index: 3;
 }
