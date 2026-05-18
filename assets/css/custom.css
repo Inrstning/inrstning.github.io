@@ -26,7 +26,7 @@
   --f-cjk:     "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
 
   /* misc */
-  --grain-opacity: 0.55;
+  --grain-opacity: 0.22;
   --ease: cubic-bezier(.2,.7,.2,1);
 }
 
@@ -44,7 +44,7 @@
   --sage:       #a3b27a;
   --gold:       #e0b251;
   --rule:       #d7cdb9;
-  --grain-opacity: 0.35;
+  --grain-opacity: 0.18;
 }
 
 /* =============================================================
@@ -111,13 +111,13 @@ h2 { font-variation-settings: "opsz" 60; }
    MASTHEAD — quiet, hairline, monospace nav
    ============================================================= */
 .masthead {
-  background: rgba(243,237,224,0.85);
-  -webkit-backdrop-filter: blur(8px) saturate(115%);
-  backdrop-filter: blur(8px) saturate(115%);
-  border-bottom: 1px solid var(--paper-edge);
+  background: var(--paper);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom: 1px solid rgba(20,17,15,0.06);
   z-index: 50;
 }
-[data-theme="dark"] .masthead { background: rgba(21,19,15,0.85); }
+[data-theme="dark"] .masthead { background: var(--paper); border-bottom-color: rgba(243,237,224,0.06); }
 .masthead__inner-wrap { padding: 0.6em 2em; max-width: 1400px; }
 .masthead a, .masthead a:visited { color: var(--ink); background-image: none; }
 .greedy-nav { background: transparent; }
