@@ -1,0 +1,16 @@
+---
+layout: default
+---
+
+{% include base_path %}
+
+{% assign body_class = "lang-en" %}
+{% if page.lang == "zh-CN" or page.lang == "zh" %}
+  {% assign body_class = "lang-zh" %}
+{% endif %}
+
+<div id="main" role="main" class="atelier-shell {{ body_class }}">
+  <article class="atelier" itemscope itemtype="http://schema.org/Person">
+    {{ content }}
+  </article>
+</div>
