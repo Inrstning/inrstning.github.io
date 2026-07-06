@@ -159,6 +159,17 @@ body::before {
   letter-spacing: 0.04em; font-family: inherit; font-size: inherit; font-weight: inherit; transition: all 0.15s ease;
 }
 .lang-toggle button.on { background: var(--ink); color: var(--paper); }
+/* 中文版入口链接（指向 /zh/ 独立中文页） */
+.lang-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: transparent;
+  font-family: var(--sans); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.02em; color: var(--ink); text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+.lang-link:hover { border-color: var(--coral); color: var(--coral); background: rgba(237,111,92,0.05); }
 
 /* typography primitives */
 .label {
@@ -590,10 +601,7 @@ footer { border-top: 1px solid var(--line); padding: 80px 0 0; background: var(-
       </ul>
     </nav>
     <div class="nav-side">
-      <div class="lang-toggle" role="group" aria-label="Language">
-        <button type="button" data-lang="en" class="on">EN</button>
-        <button type="button" data-lang="zh">中</button>
-      </div>
+      <a class="lang-link" href="/zh/" aria-label="查看中文版">中文 →</a>
       <a class="nav-cta" href="#contact">Get in touch</a>
     </div>
   </div>
@@ -1230,21 +1238,6 @@ footer { border-top: 1px solid var(--line); padding: 80px 0 0; background: var(-
       lastY = y;
     }
     window.addEventListener('scroll', onScroll, { passive: true });
-  })();
-
-  /* Bilingual toggle — toggles a [data-lang="zh"] state that swaps
-     emphasis from EN display copy to CN. Default EN per brand spec
-     (italic emphasis prefers English Playfair). */
-  (function () {
-    var buttons = document.querySelectorAll('.lang-toggle button');
-    if (!buttons.length) return;
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        buttons.forEach(function (b) { b.classList.remove('on'); });
-        btn.classList.add('on');
-        document.documentElement.setAttribute('data-lang', btn.getAttribute('data-lang'));
-      });
-    });
   })();
 </script>
 </body>
