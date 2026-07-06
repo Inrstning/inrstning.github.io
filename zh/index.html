@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>宁英松 · NLP 研究者 — 记忆 · 检索 · 强化学习</title>
+<meta name="description" content="宁英松 — 东北大学硕士、百度文心实习生。为大语言模型构建长期记忆、混合检索与强化学习。ACL 2026 一作。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600;1,700&family=Noto+Serif+SC:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   Atelier Zero — adapted for 宁英松 Yingsong Ning personal site.
+   Single source: brand-spec.md tokens + Inter Tight / Playfair /
+   Inter / JetBrains Mono / Noto Serif SC (CJK emphasis fallback).
+   ============================================================ */
+:root {
+  --paper: #efe7d2;
+  --paper-warm: #ece4cf;
+  --paper-dark: #ddd2b6;
+  --ink: #15140f;
+  --ink-soft: #2a2620;
+  --ink-mute: #5a5448;
+  --ink-faint: #8b8676;
+  --coral: #ed6f5c;
+  --coral-soft: #f08e7c;
+  --mustard: #e9b94a;
+  --olive: #6e7448;
+  --bone: #f7f1de;
+  --line: rgba(21, 20, 15, 0.16);
+  --line-soft: rgba(21, 20, 15, 0.08);
+  --line-faint: rgba(21, 20, 15, 0.05);
+  --shadow: 0 30px 60px -30px rgba(21, 20, 15, 0.18);
+  --serif: 'Playfair Display', 'Noto Serif SC', 'Times New Roman', serif;
+  --sans: 'Inter Tight', 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --body: 'Inter', 'PingFang SC', 'Noto Sans SC', -apple-system, system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  --cjk-serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--paper); color: var(--ink); }
+body {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+::selection { background: var(--coral); color: #fff; }
+
+/* paper texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(106, 92, 56, 0.07) 0, transparent 28%),
+    radial-gradient(circle at 88% 72%, rgba(106, 92, 56, 0.06) 0, transparent 32%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.16  0 0 0 0 0.12  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: auto, auto, 240px 240px;
+  mix-blend-mode: multiply;
+  opacity: 0.92;
+}
+
+.shell { position: relative; z-index: 2; }
+.container {
+  max-width: 1320px;
+  padding: 0 56px;
+  margin: 0 auto;
+  position: relative;
+}
+.container.wide { max-width: 1440px; }
+
+/* side rails */
+.side-rail {
+  position: fixed; top: 0; bottom: 0; width: 32px; z-index: 3;
+  pointer-events: none; display: flex; align-items: center; justify-content: center;
+}
+.side-rail.right { right: 0; border-left: 1px solid var(--line-faint); }
+.side-rail .rail-text {
+  font-family: var(--sans); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.42em; text-transform: uppercase; color: var(--ink-faint);
+  writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap;
+}
+
+/* topbar */
+.topbar {
+  border-bottom: 1px solid var(--line);
+  padding: 9px 0; background: var(--paper);
+  position: relative; z-index: 4;
+}
+.topbar-inner {
+  display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.topbar-inner b { color: var(--ink); font-weight: 600; }
+.topbar-inner .coral { color: var(--coral); }
+.topbar-inner > span { white-space: nowrap; }
+.topbar-inner .right { display: inline-flex; gap: 18px; align-items: center; }
+.topbar-link { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; transition: color 160ms ease, border-color 160ms ease; }
+.topbar-link:hover { color: var(--coral); border-bottom-color: var(--coral); }
+.pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--coral); display: inline-block; margin-right: 6px; animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* nav */
+.nav {
+  padding: 20px 0; position: sticky; top: 0; z-index: 50;
+  background: var(--paper); transform: translateY(0);
+  transition: transform 360ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 220ms ease, border-color 220ms ease;
+  border-bottom: 1px solid transparent; will-change: transform;
+}
+.nav.is-hidden { transform: translateY(-100%); pointer-events: none; box-shadow: none; }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-family: var(--sans); font-weight: 700; letter-spacing: -0.01em;
+  color: var(--ink); text-decoration: none; font-size: 18px;
+}
+.brand-mark {
+  width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--ink); border-radius: 50%;
+  font-family: var(--cjk-serif); font-size: 17px; color: var(--ink); background: transparent;
+  line-height: 1;
+}
+.brand-meta {
+  font-family: var(--sans); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-faint); line-height: 1.3;
+  margin-left: 2px; border-left: 1px solid var(--line); padding-left: 14px;
+}
+.brand-meta b { display: block; color: var(--ink); font-weight: 600; }
+.nav-links { display: flex; gap: 34px; list-style: none; }
+.nav-links a {
+  color: var(--ink); text-decoration: none; font-family: var(--sans);
+  font-size: 14px; font-weight: 500; transition: color 0.18s ease; position: relative;
+}
+.nav-links a:hover { color: var(--coral); }
+.nav-links a .num { font-size: 9px; color: var(--ink-faint); position: absolute; top: -7px; right: -16px; letter-spacing: 0.04em; }
+.nav-side { display: inline-flex; align-items: center; gap: 16px; }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 9px 16px; border-radius: 999px; background: var(--ink); color: var(--paper);
+  font-family: var(--sans); font-size: 13px; font-weight: 500; text-decoration: none; white-space: nowrap;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.nav-cta:hover { background: var(--coral); transform: translateY(-1px); }
+.nav-cta::after { content: '↓'; color: var(--mustard); font-size: 12px; }
+.lang-toggle {
+  display: inline-flex; align-items: center; gap: 0; border: 1px solid var(--line);
+  border-radius: 999px; overflow: hidden; font-family: var(--sans); font-size: 11px; font-weight: 600;
+}
+.lang-toggle button {
+  border: 0; background: transparent; color: var(--ink-mute); padding: 7px 11px; cursor: pointer;
+  letter-spacing: 0.04em; font-family: inherit; font-size: inherit; font-weight: inherit; transition: all 0.15s ease;
+}
+.lang-toggle button.on { background: var(--ink); color: var(--paper); }
+
+/* typography primitives */
+.label {
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--coral);
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.label::before { content: ''; width: 18px; height: 1px; background: var(--coral); display: inline-block; }
+.label .ix { color: var(--ink-faint); font-weight: 500; margin-left: 4px; }
+.display {
+  font-family: var(--sans); font-weight: 800; letter-spacing: -0.028em;
+  color: var(--ink); line-height: 1.02;
+}
+.display em { font-family: var(--serif); font-style: italic; font-weight: 500; letter-spacing: -0.018em; }
+.display .dot { color: var(--coral); }
+.lead { font-family: var(--body); font-size: 16px; line-height: 1.6; color: var(--ink-soft); max-width: 38ch; }
+.meta { font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); }
+.coord { font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; color: var(--ink-faint); }
+.roman { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--coral); }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 999px;
+  font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: -0.005em;
+  text-decoration: none; border: 1px solid transparent;
+  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease; cursor: pointer; white-space: nowrap;
+}
+.btn-primary { background: var(--coral); color: #fff; box-shadow: 0 14px 26px -16px rgba(237, 111, 92, 1); }
+.btn-primary:hover { transform: translateY(-1px); background: #e25e4a; }
+.btn-ghost { background: transparent; color: var(--ink); border-color: rgba(21, 20, 15, 0.2); }
+.btn-ghost:hover { background: rgba(21, 20, 15, 0.04); }
+.btn .arrow { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; }
+.btn .arrow svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.code-inline { font-family: var(--mono); font-size: 13px; background: var(--bone); padding: 1px 6px; border-radius: 4px; }
+
+/* section common */
+section { position: relative; padding: 124px 0; }
+section.tight { padding: 88px 0; }
+.sec-rule {
+  display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+  padding-bottom: 18px; margin-bottom: 56px; border-bottom: 1px solid var(--line);
+  font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint);
+}
+.sec-rule .roman { font-size: 15px; letter-spacing: 0; }
+.sec-rule .meta-grp { display: inline-flex; gap: 12px; align-items: center; color: var(--ink-mute); }
+.sec-rule .meta-grp .dot-mark { color: var(--coral); }
+.sec-rule .meta-grp b { color: var(--ink); font-weight: 600; }
+.sec-rule > span:last-child { margin-left: auto; }
+.section-header { margin-bottom: 64px; }
+.section-header .label { margin-bottom: 28px; }
+.section-header h2 { font-size: clamp(38px, 5.2vw, 68px); margin-top: 22px; max-width: 18ch; }
+.section-header .lead { margin-top: 22px; }
+
+/* Bilingual CN subtitle layer — revealed only when 中 is active.
+   Per brand spec, italic emphasis stays English (Playfair true italic);
+   CN carries the subtitle meaning via Noto Serif SC synthetic emphasis. */
+.cn-sub {
+  display: none;
+  font-family: var(--cjk-serif);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  color: var(--ink-mute);
+  margin-top: 14px;
+  max-width: 26ch;
+}
+.cn-sub .em { color: var(--ink); }
+[data-lang="zh"] .cn-sub { display: block; }
+[data-lang="zh"] .hero-copy .cn-sub { display: block; }
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative; padding: 0; min-height: calc(100vh - 130px);
+  display: flex; flex-direction: column; align-items: stretch; border-bottom: 1px solid var(--line);
+}
+.hero > .container { flex: 0 0 auto; }
+.hero > .container.hero-grid { flex: 1 1 auto; }
+.hero-grid {
+  display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px;
+  align-items: center; padding-top: 48px; padding-bottom: 48px;
+}
+.hero-copy { display: flex; flex-direction: column; gap: 22px; }
+.hero-copy .label { margin-bottom: 4px; }
+.hero-copy .display { font-size: clamp(44px, 6.4vw, 86px); }
+.hero-copy .lead { max-width: 44ch; }
+.nameplate {
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px;
+}
+.nameplate .cn { font-family: var(--cjk-serif); font-size: 16px; letter-spacing: 0.28em; color: var(--ink-mute); font-weight: 500; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+.hero-stats { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 10px; }
+.stat { display: flex; align-items: center; gap: 12px; }
+.stat .ring {
+  width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--line);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--sans); font-weight: 700; font-size: 15px; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.stat .ring.coral { border-color: var(--coral); color: var(--coral); }
+.stat .ring.solid { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.stat-label { font-family: var(--sans); font-size: 11px; letter-spacing: 0.04em; color: var(--ink-mute); line-height: 1.35; text-transform: lowercase; }
+.stat-label b { display: block; color: var(--ink); font-weight: 600; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.hero-foot { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; margin-top: 14px; padding-top: 18px; border-top: 1px solid var(--line-soft); }
+.hero-art {
+  position: relative; aspect-ratio: 1 / 1; max-width: 520px; width: 100%; margin-left: auto;
+  background: var(--bone); border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.hero-art img, .hero-art svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.corner { position: absolute; width: 22px; height: 22px; border-color: var(--ink); border-style: solid; border-width: 0; z-index: 4; }
+.corner.tl { top: 10px; left: 10px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.corner.tr { top: 10px; right: 10px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.corner.bl { bottom: 10px; left: 10px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.corner.br { bottom: 10px; right: 10px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+.annot { position: absolute; font-family: var(--sans); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); z-index: 4; background: rgba(247,241,222,0.86); padding: 3px 7px; border-radius: 2px; }
+.annot.coord { font-family: var(--mono); letter-spacing: 0.04em; text-transform: none; }
+.annot-tl { top: 16px; left: 40px; }
+.annot-tr { top: 16px; right: 40px; }
+.annot-bl { bottom: 16px; left: 40px; }
+.annot-br { bottom: 16px; right: 40px; }
+.index { display: flex; gap: 0; margin-top: 14px; flex-wrap: wrap; }
+.index span { font-family: var(--sans); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); padding: 8px 14px 8px 0; border-top: 1px solid var(--line-soft); display: flex; gap: 8px; align-items: baseline; flex: 1 1 auto; }
+.index .n { font-family: var(--mono); color: var(--coral); }
+.index .on { color: var(--ink); }
+
+/* ---------- WIRE strip ---------- */
+.wire { border-bottom: 1px solid var(--line); background: var(--paper-warm); padding: 26px 0; overflow: hidden; }
+.wire-inner { display: flex; align-items: center; gap: 28px; }
+.wire-left { display: inline-flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.wire-mark { width: 9px; height: 9px; border-radius: 50%; background: var(--coral); position: relative; }
+.wire-mark .wire-pulse { position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--coral); opacity: 0.5; animation: pulse 2.4s ease-in-out infinite; }
+.wire-title b { display: block; font-family: var(--sans); font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.005em; }
+.wire-title span { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); letter-spacing: 0.04em; }
+.wire-rows { flex: 1 1 auto; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.wire-row { display: flex; gap: 30px; white-space: nowrap; }
+.marquee-track { display: flex; gap: 30px; animation: marquee 38s linear infinite; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.wire-item { display: inline-flex; gap: 8px; align-items: baseline; font-family: var(--sans); font-size: 12px; color: var(--ink-mute); }
+.wire-item .wire-dot { color: var(--coral); }
+.wire-item .wire-coord { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); }
+.wire-item .wire-name { color: var(--ink); font-weight: 500; }
+
+/* ---------- cards grid (pursuits) ---------- */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.card { padding: 38px 32px 34px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 16px; background: transparent; transition: background 0.2s ease; }
+.card:hover { background: rgba(237, 111, 92, 0.04); }
+.card-num { font-family: var(--mono); font-size: 11px; color: var(--coral); letter-spacing: 0.08em; }
+.card-tag { font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); }
+.card h3 { font-family: var(--sans); font-weight: 700; font-size: 22px; letter-spacing: -0.018em; line-height: 1.18; color: var(--ink); }
+.card h3 em { font-family: var(--serif); font-style: italic; font-weight: 500; }
+.card p { font-family: var(--body); font-size: 14px; line-height: 1.55; color: var(--ink-mute); }
+.card .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 14px; }
+.chip { font-family: var(--mono); font-size: 10.5px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink-mute); background: var(--bone); }
+.card-glyph { width: 46px; height: 46px; color: var(--ink); margin-bottom: 4px; }
+.card-glyph svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 1.3; }
+
+/* ---------- studio (work) dark slab ---------- */
+.studio { background: var(--ink); color: var(--paper); border-radius: 24px; margin: 0; padding: 96px 0; position: relative; overflow: hidden; }
+.studio .container { max-width: 1320px; }
+.studio::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 85% 15%, rgba(237, 111, 92, 0.16) 0, transparent 42%),
+    radial-gradient(circle at 10% 90%, rgba(233, 185, 74, 0.10) 0, transparent 38%);
+}
+.studio .sec-rule { color: rgba(247, 241, 222, 0.5); border-color: rgba(247, 241, 222, 0.16); }
+.studio .sec-rule .meta-grp b { color: var(--paper); }
+.studio .section-header h2 { color: var(--paper); }
+.studio .section-header h2 em { color: var(--coral-soft); }
+.studio .label { color: var(--coral-soft); }
+.studio .label::before { background: var(--coral-soft); }
+.studio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.work-card {
+  background: rgba(247, 241, 222, 0.04); border: 1px solid rgba(247, 241, 222, 0.12);
+  border-radius: 14px; padding: 34px 32px; display: flex; flex-direction: column; gap: 14px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; position: relative;
+}
+.work-card:hover { border-color: var(--coral); transform: translateY(-3px); background: rgba(237, 111, 92, 0.06); }
+.work-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.work-num { font-family: var(--mono); font-size: 11px; color: var(--coral-soft); letter-spacing: 0.08em; }
+.work-org { font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(247, 241, 222, 0.5); }
+.work-card h3 { font-family: var(--sans); font-weight: 600; font-size: 21px; letter-spacing: -0.012em; color: var(--paper); line-height: 1.2; }
+.work-card h3 em { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--mustard); }
+.work-meta { font-family: var(--mono); font-size: 11px; color: rgba(247, 241, 222, 0.45); letter-spacing: 0.02em; }
+.work-card p { font-family: var(--body); font-size: 14px; line-height: 1.6; color: rgba(247, 241, 222, 0.72); }
+.work-metric { display: flex; align-items: baseline; gap: 12px; margin-top: 6px; padding-top: 16px; border-top: 1px solid rgba(247, 241, 222, 0.1); }
+.work-metric .big { font-family: var(--sans); font-weight: 800; font-size: 30px; color: var(--coral-soft); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.work-metric .lbl { font-family: var(--sans); font-size: 11px; color: rgba(247, 241, 222, 0.55); text-transform: lowercase; }
+.work-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.work-chips .chip { background: transparent; border-color: rgba(247, 241, 222, 0.18); color: rgba(247, 241, 222, 0.7); }
+
+/* ---------- publications ---------- */
+.pubs { border-top: 1px solid var(--line); }
+.pub-row {
+  display: grid; grid-template-columns: 60px 1fr 160px; gap: 28px; align-items: start;
+  padding: 30px 0; border-bottom: 1px solid var(--line-soft);
+  transition: background 0.18s ease; position: relative;
+}
+.pub-row:hover { background: rgba(237, 111, 92, 0.03); }
+.pub-roman { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 26px; color: var(--coral); }
+.pub-body h3 { font-family: var(--sans); font-weight: 600; font-size: 19px; line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); max-width: 52ch; }
+.pub-authors { font-family: var(--body); font-size: 13px; color: var(--ink-mute); margin-top: 6px; }
+.pub-abstract { font-family: var(--body); font-size: 13.5px; line-height: 1.55; color: var(--ink-mute); margin-top: 8px; max-width: 60ch; }
+.pub-side { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; text-align: right; }
+.pub-venue { font-family: var(--sans); font-weight: 700; font-size: 13px; color: var(--ink); }
+.pub-status { font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+.pub-status.accepted { color: var(--olive); }
+.pub-status.review { color: var(--mustard); }
+.pub-role { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); }
+
+/* ---------- ledger (timeline) ---------- */
+.ledger-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+.ledger-col h4 { font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 26px; padding-bottom: 14px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.ledger-col h4 .dot { color: var(--coral); }
+.tl-item { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 18px 0; border-bottom: 1px dashed var(--line-soft); position: relative; }
+.tl-item:last-child { border-bottom: 0; }
+.tl-when { font-family: var(--mono); font-size: 11px; color: var(--coral); letter-spacing: 0.02em; }
+.tl-item h5 { font-family: var(--sans); font-weight: 600; font-size: 16px; color: var(--ink); letter-spacing: -0.01em; line-height: 1.3; }
+.tl-org { font-family: var(--sans); font-size: 12.5px; color: var(--ink-mute); }
+.tl-item p { font-family: var(--body); font-size: 13.5px; color: var(--ink-mute); line-height: 1.5; margin-top: 2px; }
+
+/* ---------- dispatches (news) ---------- */
+.dispatches { background: var(--paper-warm); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.news-list { display: flex; flex-direction: column; }
+.news-row { display: grid; grid-template-columns: 130px 110px 1fr; gap: 28px; align-items: baseline; padding: 20px 0; border-bottom: 1px solid var(--line-soft); }
+.news-row:last-child { border-bottom: 0; }
+.news-when { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); letter-spacing: 0.02em; }
+.news-kind { font-family: var(--sans); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); }
+.news-kind.milestone { color: var(--mustard); }
+.news-kind.work { color: var(--olive); }
+.news-body { font-family: var(--body); font-size: 15px; line-height: 1.55; color: var(--ink); }
+.news-body em { font-family: var(--serif); font-style: italic; font-weight: 500; }
+.news-body b { font-weight: 600; }
+
+/* ---------- laurels ---------- */
+.laurels-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.laurel { padding: 34px 32px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; gap: 18px; align-items: flex-start; transition: background 0.2s ease; }
+.laurel:hover { background: rgba(237, 111, 92, 0.04); }
+.laurel .star { font-family: var(--serif); font-size: 22px; color: var(--coral); line-height: 1; flex-shrink: 0; }
+.laurel-body h5 { font-family: var(--sans); font-weight: 700; font-size: 17px; color: var(--ink); letter-spacing: -0.012em; line-height: 1.25; }
+.laurel-body p { font-family: var(--body); font-size: 13.5px; color: var(--ink-mute); margin-top: 4px; line-height: 1.5; }
+
+/* ---------- CTA ---------- */
+.cta-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+.cta-grid .display { font-size: clamp(34px, 4.6vw, 58px); }
+.cta-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 30px; align-items: center; }
+.email-pill {
+  display: inline-flex; align-items: center; gap: 12px; padding: 13px 8px 13px 22px;
+  border-radius: 999px; background: var(--bone); border: 1px solid var(--line);
+  font-family: var(--mono); font-size: 14px; color: var(--ink); text-decoration: none;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+.email-pill:hover { border-color: var(--coral); color: var(--coral); }
+.email-pill .arrow-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--coral); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+.cta-foot { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line-soft); font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+.cta-foot .stamp { color: var(--coral); }
+.cta-art { position: relative; aspect-ratio: 4 / 5; max-width: 420px; margin-left: auto; background: var(--bone); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); }
+.cta-art .ribbon { position: absolute; left: 0; right: 0; bottom: 0; background: var(--ink); color: var(--paper); padding: 12px 0; text-align: center; font-family: var(--sans); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; z-index: 5; }
+.cta-art .index-cta { position: absolute; top: 14px; right: 14px; font-family: var(--mono); font-size: 11px; color: var(--paper); background: rgba(21,20,15,0.7); padding: 4px 9px; border-radius: 3px; z-index: 5; }
+
+/* ---------- footer ---------- */
+footer { border-top: 1px solid var(--line); padding: 80px 0 0; background: var(--paper); position: relative; }
+.foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; }
+.foot-brand p { font-family: var(--body); font-size: 13.5px; line-height: 1.6; color: var(--ink-mute); margin-top: 18px; max-width: 42ch; }
+.foot-brand .inline-link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.foot-brand .inline-link:hover { color: var(--coral); text-decoration-color: var(--coral); }
+.foot-cta { display: inline-flex; flex-direction: column; gap: 2px; margin-top: 20px; font-family: var(--sans); font-weight: 600; font-size: 15px; color: var(--ink); text-decoration: none; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; transition: border-color 0.18s ease; }
+.foot-cta:hover { border-color: var(--coral); }
+.foot-cta .meta { font-weight: 400; font-size: 10.5px; }
+.foot-col h5 { font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 18px; }
+.foot-col ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.foot-col a { font-family: var(--sans); font-size: 14px; color: var(--ink); text-decoration: none; transition: color 0.15s ease; }
+.foot-col a:hover { color: var(--coral); }
+.foot-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 26px 0; border-top: 1px solid var(--line); font-family: var(--sans); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+.foot-bottom .right { display: inline-flex; gap: 20px; align-items: center; }
+.foot-mega { overflow: hidden; padding: 20px 0 10px; }
+.foot-mega .word { font-family: var(--sans); font-weight: 800; font-size: clamp(60px, 13vw, 180px); line-height: 0.9; letter-spacing: -0.04em; color: var(--ink); text-align: center; }
+.foot-mega .word em { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--coral); }
+
+/* ---------- reveal motion ---------- */
+[data-reveal] { opacity: 0; translate: 0 28px; transition: opacity 820ms cubic-bezier(0.22, 0.61, 0.36, 1), translate 820ms cubic-bezier(0.22, 0.61, 0.36, 1), scale 820ms cubic-bezier(0.22, 0.61, 0.36, 1); transition-delay: var(--reveal-delay, 0ms); will-change: opacity, transform; }
+[data-reveal='left'] { translate: -36px 0; }
+[data-reveal='right'] { translate: 36px 0; }
+[data-reveal='scale'] { translate: 0 0; scale: 0.96; }
+[data-reveal='rise-lg'] { translate: 0 64px; scale: 0.985; }
+[data-reveal][data-revealed='true'] { opacity: 1; translate: 0 0; scale: 1; }
+.cards > .card[data-reveal]:nth-child(1) { --reveal-delay: 0ms; }
+.cards > .card[data-reveal]:nth-child(2) { --reveal-delay: 90ms; }
+.cards > .card[data-reveal]:nth-child(3) { --reveal-delay: 180ms; }
+.studio-grid > .work-card[data-reveal]:nth-child(1) { --reveal-delay: 0ms; }
+.studio-grid > .work-card[data-reveal]:nth-child(2) { --reveal-delay: 90ms; }
+.studio-grid > .work-card[data-reveal]:nth-child(3) { --reveal-delay: 180ms; }
+.studio-grid > .work-card[data-reveal]:nth-child(4) { --reveal-delay: 270ms; }
+.hero-copy > [data-reveal]:nth-of-type(1) { --reveal-delay: 0ms; }
+.hero-copy > [data-reveal]:nth-of-type(2) { --reveal-delay: 70ms; }
+.hero-copy > [data-reveal]:nth-of-type(3) { --reveal-delay: 140ms; }
+.hero-copy > [data-reveal]:nth-of-type(4) { --reveal-delay: 210ms; }
+.hero-copy > [data-reveal]:nth-of-type(5) { --reveal-delay: 280ms; }
+.hero-copy > [data-reveal]:nth-of-type(6) { --reveal-delay: 350ms; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1180px) {
+  .container { padding: 0 40px; }
+  .hero-grid { gap: 40px; }
+  .ledger-grid { gap: 44px; }
+}
+@media (max-width: 980px) {
+  section { padding: 92px 0; }
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; padding-top: 36px; }
+  .hero-art { max-width: 440px; margin: 0 auto; }
+  .cards { grid-template-columns: 1fr; }
+  .studio-grid { grid-template-columns: 1fr; }
+  .cta-grid { grid-template-columns: 1fr; gap: 40px; }
+  .cta-art { max-width: 380px; margin: 0 auto; }
+  .ledger-grid { grid-template-columns: 1fr; gap: 32px; }
+  .laurels-grid { grid-template-columns: 1fr; }
+  .foot-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 720px) {
+  .container { padding: 0 22px; }
+  section { padding: 72px 0; }
+  section.tight { padding: 60px 0; }
+  .topbar-inner .mid, .topbar-inner .right span:not(.always) { display: none; }
+  .side-rail { display: none; }
+  .brand-meta { display: none; }
+  .nav { padding: 14px 0; }
+  .brand { font-size: 16px; }
+  .brand-mark { width: 34px; height: 34px; font-size: 15px; }
+  .nav-cta { font-size: 12px; padding: 8px 13px; }
+  .lang-toggle button { padding: 6px 9px; }
+  .hero-copy .display { font-size: clamp(34px, 9.5vw, 52px); }
+  .hero-stats { gap: 18px; }
+  .stat .ring { width: 48px; height: 48px; font-size: 13px; }
+  .hero-foot { gap: 14px; }
+  .hero-foot .coord { font-size: 9px; }
+  .section-header h2 { font-size: clamp(30px, 8vw, 42px); }
+  .section-header { margin-bottom: 44px; }
+  .sec-rule { gap: 10px; margin-bottom: 40px; }
+  .sec-rule > span:last-child { margin-left: 0; }
+  .card { padding: 28px 24px; }
+  .work-card { padding: 26px 24px; }
+  .pub-row { grid-template-columns: 44px 1fr; gap: 16px; }
+  .pub-side { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 14px; text-align: left; flex-wrap: wrap; }
+  .pub-body { grid-column: 2; }
+  .news-row { grid-template-columns: 1fr; gap: 6px; padding: 16px 0; }
+  .news-kind { order: 2; }
+  .laurel { padding: 26px 22px; gap: 14px; }
+  .foot-grid { grid-template-columns: 1fr; gap: 32px; }
+  .foot-bottom { flex-direction: column; align-items: flex-start; }
+  .wire-inner { flex-direction: column; align-items: flex-start; gap: 14px; }
+}
+@media (max-width: 420px) {
+  .container { padding: 0 18px; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { justify-content: center; }
+  .index span { font-size: 10px; flex: 1 1 45%; }
+}
+
+/* ---------- hero load choreography (the single decisive flourish) ----------
+   Runs once on page load. The hero plate drifts in with a long ease while the
+   coral stamp dot pulses twice — a 1.6s orchestrated entrance that reads as
+   intentional rather than the uniform reveal-everywhere motion. Disabled
+   under prefers-reduced-motion (block below). */
+.hero-art[data-revealed='true'] svg {
+  animation: plate-settle 1100ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.hero-art[data-revealed='true'] svg .stamp-dot,
+.hero-art[data-revealed='true'] + .index { animation-delay: 180ms; }
+@keyframes plate-settle {
+  from { opacity: 0; transform: scale(1.04) translateY(10px); filter: blur(2px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+/* coral stamp dot — the one accent pulse */
+.stamp-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stamp-ink 700ms ease-out 360ms both;
+}
+@keyframes stamp-ink {
+  0%   { opacity: 0; transform: scale(2.4); }
+  60%  { opacity: 1; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1; translate: 0; scale: 1; transition: none; }
+  .marquee-track { animation: none; }
+  .pulse, .wire-pulse { animation: none; }
+  .hero-art[data-revealed='true'] svg,
+  .stamp-pulse { animation: none; }
+}
+</style>
+</head>
+<body>
+<style>
+  /* 中文版字体覆盖：标题强调词用 Noto Serif SC（中文无真斜体，用合成斜体 + coral），
+     拉丁词（YN /罗马数字）仍走 Playfair。body 默认走 PingFang/Noto Sans SC 回退。 */
+  .display em { font-family: 'Noto Serif SC', 'Playfair Display', serif; font-style: italic; font-weight: 600; }
+  .display { letter-spacing: -0.012em; }
+  .lead, .cn-sub, body { font-family: 'Inter', 'PingFang SC', 'Noto Sans SC', system-ui, sans-serif; }
+  .cn-sub { display: none !important; } /* 中文版不再需要 EN/中 副标题层 */
+  .lang-toggle { display: none !important; } /* 中文版隐藏语言开关 */
+  .lang-link { display: inline-flex !important; }
+</style>
+<div class="shell">
+
+<!-- SIDE RAIL -->
+<div class="side-rail right"><span class="rail-text">宁英松 · Yingsong Ning · Vol. 01 · MMXXVI</span></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <span><b>宁英松</b> · Yingsong Ning</span>
+    <span class="mid">NLP 研究者 · 工作室</span>
+    <span class="right">
+      <span class="always"><span class="pulse"></span>招聘合作欢迎</span>
+      <a class="topbar-link" href="https://github.com/Inrstning" target="_blank" rel="noreferrer noopener">GitHub</a>
+      <a class="topbar-link" href="mailto:inrstning@gmail.com">邮箱</a>
+    </span>
+  </div>
+</div>
+
+<!-- NAV -->
+<header class="nav" data-od-id="nav">
+  <div class="container nav-inner">
+    <a href="#top" class="brand" data-od-id="brand">
+      <span class="brand-mark">宁</span>
+      <span>Yingsong Ning</span>
+      <span class="brand-meta"><b>NLP 研究</b>记忆 · RL · TKG</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#pursuits">研究方向<span class="num">03</span></a></li>
+        <li><a href="#studio">项目<span class="num">04</span></a></li>
+        <li><a href="#papers">论文<span class="num">04</span></a></li>
+        <li><a href="#ledger">履历<span class="num">02</span></a></li>
+        <li><a href="#dispatches">动态<span class="num">06</span></a></li>
+      </ul>
+    </nav>
+    <div class="nav-side">
+      <a class="nav-cta lang-link" href="/" style="display:none;border-radius:999px;">EN →</a>
+      <a class="nav-cta" href="#contact">联系我</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ I. HERO ============ -->
+<section class="hero" id="top" data-od-id="hero">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">I.</span>
+      <span class="meta-grp">
+        <span>封面 / Cover Plate</span>
+        <span class="dot-mark">•</span>
+        <span><b>宁英松</b> / Vol. 01</span>
+      </span>
+      <span>001 / 008</span>
+    </div>
+  </div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="nameplate" data-reveal>
+        <span class="cn">YINGSONG · NING</span>
+      </div>
+      <span class="label" data-reveal>NLP 研究者 · 硕士在读 <span class="ix">· Nº 01</span></span>
+      <h1 class="display" data-reveal>为大语言模型构建 <em>记忆</em>、<em>检索</em>与 <em>强化学习</em><span class="dot">。</span></h1>
+      <p class="lead" data-reveal>研究大语言模型的长期记忆、混合检索与强化学习后训练——现于 <b>百度 · 文心 App</b> 实习，东北大学硕士在读。一作论文被 <b>ACL 2026</b> 录用。</p>
+      <div class="hero-actions" data-reveal>
+        <a class="btn btn-primary" href="https://inrstning.github.io/files/Yingsong_Ning_CV.pdf" target="_blank" rel="noreferrer noopener">
+          下载简历（PDF）
+          <span class="arrow"><svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H8M19 5v11"/></svg></span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/Inrstning" target="_blank" rel="noreferrer noopener">
+          GitHub · @Inrstning
+          <span class="arrow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg></span>
+        </a>
+      </div>
+      <div class="hero-stats" data-reveal>
+        <div class="stat">
+          <span class="ring solid">04</span>
+          <span class="stat-label"><b>论文</b>ACL · EMNLP</span>
+        </div>
+        <div class="stat">
+          <span class="ring coral">96%</span>
+          <span class="stat-label"><b>胜率</b>相对提升 +91%</span>
+        </div>
+        <div class="stat">
+          <span class="ring">25</span>
+          <span class="stat-label"><b>年龄</b>硕士在读</span>
+        </div>
+      </div>
+      <div class="hero-foot" data-reveal>
+        <span class="meta">↳ &nbsp; 记忆 · 检索 · 强化学习 · 时序知识图谱</span>
+        <span class="coord">39.90° N · 116.40° E · 北京</span>
+      </div>
+    </div>
+    <div class="hero-art" data-reveal="scale" data-od-id="hero-plate">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+      <span class="annot annot-tl coord">FIG. 01 / YN-26</span>
+      <span class="annot annot-tr">Plate Nº 08</span>
+      <span class="annot annot-bl coord">SHA · yns0426</span>
+      <span class="annot annot-br">Composed in&nbsp;<span style="color:var(--coral);">the Atelier</span></span>
+      <svg viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="paperG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f3ecd8"/><stop offset="1" stop-color="#e6dcc2"/>
+          </linearGradient>
+          <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="1" fill="#15140f" opacity="0.08"/>
+          </pattern>
+        </defs>
+        <rect width="520" height="520" fill="url(#paperG)"/>
+        <rect width="520" height="520" fill="url(#dots)"/>
+        <!-- mounted-print inner frame -->
+        <rect x="26" y="26" width="468" height="468" fill="none" stroke="#15140f" stroke-width="0.75" opacity="0.22"/>
+
+        <!-- torn paper collage backdrop (offset, rotated) -->
+        <g transform="rotate(-3 260 260)">
+          <polygon points="64,96 458,72 470,440 96,452 52,300" fill="#f7f1de" stroke="#15140f" stroke-width="0.8" opacity="0.9"/>
+          <polygon points="64,96 458,72 470,440 96,452 52,300" fill="none" stroke="#15140f" stroke-width="0.4" opacity="0.3" transform="translate(5 5)"/>
+        </g>
+
+        <!-- found diagram: knowledge graph pasted in, top-left, demoted -->
+        <g transform="translate(40 44) rotate(-6)" opacity="0.55">
+          <rect x="-6" y="-6" width="150" height="118" fill="#efe7d2" stroke="#15140f" stroke-width="0.6"/>
+          <g stroke="#15140f" stroke-width="0.7" fill="none">
+            <line x1="20" y1="30" x2="64" y2="22"/><line x1="64" y1="22" x2="120" y2="40"/>
+            <line x1="120" y1="40" x2="128" y2="86"/><line x1="128" y1="86" x2="70" y2="98"/>
+            <line x1="70" y1="98" x2="20" y2="78"/><line x1="64" y1="22" x2="70" y2="98"/>
+          </g>
+          <g><circle cx="20" cy="30" r="3.5" fill="#efe7d2" stroke="#15140f" stroke-width="0.9"/>
+            <circle cx="64" cy="22" r="4.5" fill="#ed6f5c" stroke="#15140f" stroke-width="0.9"/>
+            <circle cx="120" cy="40" r="3" fill="#efe7d2" stroke="#15140f" stroke-width="0.9"/>
+            <circle cx="128" cy="86" r="5" fill="#e9b94a" stroke="#15140f" stroke-width="0.9"/>
+            <circle cx="70" cy="98" r="3.5" fill="#6e7448" stroke="#15140f" stroke-width="0.9"/>
+            <circle cx="20" cy="78" r="3" fill="#efe7d2" stroke="#15140f" stroke-width="0.9"/></g>
+          <text x="0" y="-12" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#5a5448">FIG. 01 / TKG · found diagram</text>
+        </g>
+
+        <!-- postage stamp, top-right, tilted -->
+        <g transform="translate(372 38) rotate(7)">
+          <rect x="0" y="0" width="104" height="124" fill="#efe7d2" stroke="#15140f" stroke-width="0.9"/>
+          <g fill="#efe7d2" stroke="#15140f" stroke-width="0.5">
+            <circle cx="0" cy="12" r="4"/><circle cx="0" cy="31" r="4"/><circle cx="0" cy="50" r="4"/><circle cx="0" cy="69" r="4"/><circle cx="0" cy="88" r="4"/><circle cx="0" cy="107" r="4"/>
+            <circle cx="104" cy="12" r="4"/><circle cx="104" cy="31" r="4"/><circle cx="104" cy="50" r="4"/><circle cx="104" cy="69" r="4"/><circle cx="104" cy="88" r="4"/><circle cx="104" cy="107" r="4"/>
+            <circle cx="12" cy="0" r="4"/><circle cx="31" cy="0" r="4"/><circle cx="50" cy="0" r="4"/><circle cx="69" cy="0" r="4"/><circle cx="88" cy="0" r="4"/>
+            <circle cx="12" cy="124" r="4"/><circle cx="31" cy="124" r="4"/><circle cx="50" cy="124" r="4"/><circle cx="69" cy="124" r="4"/><circle cx="88" cy="124" r="4"/>
+          </g>
+          <rect x="8" y="8" width="88" height="108" fill="none" stroke="#15140f" stroke-width="0.4"/>
+          <text x="52" y="34" text-anchor="middle" font-family="Inter Tight, sans-serif" font-weight="800" font-size="18" fill="#15140f" letter-spacing="-0.02em">YN</text>
+          <text x="52" y="48" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a5448" letter-spacing="1.5">NLP · MMXXVI</text>
+          <line x1="16" y1="58" x2="88" y2="58" stroke="#15140f" stroke-width="0.4"/>
+          <!-- silhouette stand-in -->
+          <g transform="translate(52 92)">
+            <circle cx="0" cy="-18" r="9" fill="#15140f"/>
+            <path d="M-15 6 Q-15 -8 0 -8 Q15 -8 15 6 L15 16 L-15 16 Z" fill="#15140f"/>
+          </g>
+          <text x="52" y="116" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6.5" fill="#ed6f5c" letter-spacing="1.5">· POSTAGE ·</text>
+        </g>
+
+        <!-- ticket stub, bottom-left, tilted -->
+        <g transform="translate(44 372) rotate(-5)">
+          <path d="M0 0 L196 0 L196 16 A8 8 0 0 1 196 32 L196 48 L0 48 L0 32 A8 8 0 0 1 0 16 Z" fill="#efe7d2" stroke="#15140f" stroke-width="0.9"/>
+          <line x1="0" y1="24" x2="196" y2="24" stroke="#15140f" stroke-width="0.4" stroke-dasharray="3 3"/>
+          <text x="10" y="20" font-family="Inter Tight, sans-serif" font-weight="700" font-size="10" fill="#15140f" letter-spacing="-0.01em">BEIJING ↔ SHENYANG</text>
+          <text x="10" y="40" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a5448">M.S. · 2024—2027 · 保研</text>
+          <text x="150" y="20" font-family="JetBrains Mono, monospace" font-size="8" fill="#15140f">SEAT 04</text>
+          <text x="150" y="40" font-family="JetBrains Mono, monospace" font-size="8" fill="#ed6f5c">★ GATE B</text>
+        </g>
+
+        <!-- scattered typographic fragments -->
+        <text x="100" y="200" font-family="Noto Serif SC, serif" font-size="30" fill="#15140f" opacity="0.85" transform="rotate(-11 100 200)">记忆</text>
+        <text x="420" y="252" font-family="Inter Tight, sans-serif" font-weight="800" font-size="26" fill="#15140f" opacity="0.82" transform="rotate(8 420 252)">RL</text>
+        <text x="92" y="316" font-family="JetBrains Mono, monospace" font-size="13" fill="#5a5448" transform="rotate(-4 92 316)">0.9643 · MRR</text>
+        <text x="300" y="300" font-family="Noto Serif SC, serif" font-size="24" fill="#6e7448" opacity="0.8" transform="rotate(6 300 300)">检索</text>
+        <text x="300" y="452" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5448" transform="rotate(3 300 452)">t = 150 steps · GSPO</text>
+
+        <!-- giant monogram (focal) -->
+        <text x="262" y="300" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-weight="500" font-size="196" fill="#15140f" opacity="0.94">YN</text>
+        <text x="262" y="346" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="32" fill="#ed6f5c" letter-spacing="8">宁</text>
+        <!-- single coral stamp dot -->
+        <circle class="stamp-pulse" cx="372" cy="306" r="5" fill="#ed6f5c"/>
+        <text x="356" y="328" font-family="JetBrains Mono, monospace" font-size="7" fill="#ed6f5c" letter-spacing="0.5">APPROVED</text>
+
+        <!-- bottom coordinate rule -->
+        <g font-family="JetBrains Mono, monospace" font-size="8" fill="#5a5448">
+          <text x="26" y="498">39.90° N · 116.40° E</text>
+          <text x="494" y="498" text-anchor="end">PLATE Nº 08 · YNS</text>
+        </g>
+      </svg>
+      <div class="index">
+        <span><span class="n">01</span>记忆</span>
+        <span class="on"><span class="n">02</span>检索</span>
+        <span><span class="n">03</span>强化</span>
+        <span><span class="n">04</span>时序图谱</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WIRE STRIP ============ -->
+<section class="wire" aria-label="Research focus wire">
+  <div class="container wire-inner">
+    <div class="wire-left">
+      <span class="wire-mark" aria-hidden="true"><span class="wire-pulse"></span></span>
+      <span class="wire-title">
+        <b>来自案头</b>
+        <span>4 条研究线 · 1 位研究者</span>
+      </span>
+    </div>
+    <div class="wire-rows">
+      <div class="marquee-track" aria-hidden="true">
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">LLM</span><span class="wire-name">长期记忆</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">RET</span><span class="wire-name">混合检索</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">RL</span><span class="wire-name">GRPO / GSPO</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">TKG</span><span class="wire-name">时序知识图谱预测</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">RM</span><span class="wire-name">CTR 奖励模型</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">SFT</span><span class="wire-name">数据合成</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">LLM</span><span class="wire-name">长期记忆</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">RET</span><span class="wire-name">混合检索</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">RL</span><span class="wire-name">GRPO / GSPO</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">TKG</span><span class="wire-name">时序知识图谱预测</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">RM</span><span class="wire-name">CTR 奖励模型</span></span>
+        <span class="wire-item"><span class="wire-dot">·</span><span class="wire-coord">SFT</span><span class="wire-name">数据合成</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ II. PURSUITS ============ -->
+<section id="pursuits" data-od-id="pursuits">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">II.</span>
+      <span class="meta-grp"><span>研究方向 / 三条线</span><span class="dot-mark">•</span><span><b>我一直在追的</b></span></span>
+      <span>002 / 008</span>
+    </div>
+    <div class="section-header">
+      <span class="label" data-reveal>研究方向 <span class="ix">· Nº 02</span></span>
+      <h2 class="display" data-reveal>我一直在追的<em>三条线</em><span class="dot">。</span></h2>
+      <p class="lead" data-reveal>我的研究在记忆、学习与推理的交汇处——那些让语言模型记住、改进与预见的系统。</p>
+    </div>
+    <div class="cards">
+
+      <div class="card" data-reveal data-od-id="card-memory">
+        <div class="card-glyph">
+          <svg viewBox="0 0 46 46"><rect x="8" y="14" width="30" height="22" rx="2"/><path d="M13 14V9h20v5M13 25h20M13 31h14"/><circle cx="33" cy="31" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <span class="card-num">01 · 记忆</span>
+        <h3>LLM 长期记忆与 <em>检索</em></h3>
+        <p>用户画像抽取、查询改写、混合检索（BM25 + 稠密向量 + 重排序），以及文心 App 生产级 SFT 数据合成。</p>
+        <div class="chips"><span class="chip">BM25</span><span class="chip">Qwen3-Embed</span><span class="chip">Reranker</span><span class="chip">SFT</span></div>
+      </div>
+
+      <div class="card" data-reveal data-od-id="card-rl">
+        <div class="card-glyph">
+          <svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="15"/><path d="M23 8v30M8 23h30M15 15l16 16M31 15L15 31"/><circle cx="23" cy="23" r="4" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <span class="card-num">02 · 强化学习</span>
+        <h3>LLM 的 <em>RL</em> 后训练</h3>
+        <p>GRPO / GSPO 策略优化、学习的 CTR 奖励模型、奖励黑客缓解，以及让训练跑起来的 verl + FSDP + vLLM rollout 管线。</p>
+        <div class="chips"><span class="chip">GRPO</span><span class="chip">GSPO</span><span class="chip">CTR-RM</span><span class="chip">verl</span></div>
+      </div>
+
+      <div class="card" data-reveal data-od-id="card-reasoning">
+        <div class="card-glyph">
+          <svg viewBox="0 0 46 46"><circle cx="12" cy="14" r="4"/><circle cx="34" cy="14" r="4"/><circle cx="23" cy="34" r="4"/><path d="M16 14h14M14 18l8 13M32 18l-8 13"/></svg>
+        </div>
+        <span class="card-num">03 · 推理</span>
+        <h3>时序知识图谱 <em>推理</em></h3>
+        <p>生成器-判别器框架、基于扩散的历史路径去噪，以及用于演化知识图谱预测的混合 Transformer 架构。</p>
+        <div class="chips"><span class="chip">TKG</span><span class="chip">Diffusion</span><span class="chip">Critic-LM</span><span class="chip">HTA</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ III. STUDIO (dark slab) ============ -->
+<section class="studio" id="studio" data-od-id="studio">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">III.</span>
+      <span class="meta-grp"><span>工作室 / 精选项目</span><span class="dot-mark">•</span><span><b>已上线的系统</b></span></span>
+      <span>003 / 008</span>
+    </div>
+    <div class="section-header">
+      <span class="label" data-reveal>精选项目 <span class="ix">· Nº 03</span></span>
+      <h2 class="display" data-reveal>我亲手<em>构建</em>、度量并<em>上线</em>的系统<span class="dot">。</span></h2>
+      <p class="lead" data-reveal style="color:rgba(247,241,222,0.6);max-width:46ch;">四个项目，横跨工业级 RL 训练、生产检索管线、蒸馏记忆召回与课程研究——每个都带一个真实提升的数字。</p>
+    </div>
+    <div class="studio-grid">
+
+      <div class="work-card" data-reveal data-od-id="work-grpo">
+        <div class="work-head"><span class="work-num">P · 01</span><span class="work-org">百度文心</span></div>
+        <h3>基于 GRPO 的 SUG 模型<em>优化</em></h3>
+        <span class="work-meta">2026.02 — 至今 · verl + FSDP + vLLM rollout</span>
+        <p>构建 CTR 驱动的奖励模型（Qwen3-Embedding + MLP），用 GSPO 训练建议生成策略。150 步收敛（GRPO 需 300 步），高质量建议率从 78.91% 提升到 96.00%。</p>
+        <div class="work-metric"><span class="big">+91%</span><span class="lbl">相对胜率提升 · 盲评 65.66% vs 34.34%</span></div>
+        <div class="work-chips"><span class="chip">GRPO</span><span class="chip">GSPO</span><span class="chip">CTR-RM</span><span class="chip">verl</span><span class="chip">vLLM</span></div>
+      </div>
+
+      <div class="work-card" data-reveal data-od-id="work-retrieval">
+        <div class="work-head"><span class="work-num">P · 02</span><span class="work-org">百度文心</span></div>
+        <h3>用户记忆抽取与<em>混合</em>检索</h3>
+        <span class="work-meta">2025.12 — 2026.02</span>
+        <p>两级画像抽取管线 + 查询改写（有效改写率 81.7%），由 BM25 + Qwen3-Embedding + Qwen3-Reranker 混合检索支撑生产环境中的记忆模块。</p>
+        <div class="work-metric"><span class="big">0.9643</span><span class="lbl">MRR · Recall@5 达 67.25%</span></div>
+        <div class="work-chips"><span class="chip">BM25</span><span class="chip">Qwen3-Embed</span><span class="chip">Qwen3-Reranker</span></div>
+      </div>
+
+      <div class="work-card" data-reveal data-od-id="work-distill">
+        <div class="work-head"><span class="work-num">P · 03</span><span class="work-org">百度文心</span></div>
+        <h3>个性化记忆召回与<em>改写</em></h3>
+        <span class="work-meta">2025.12 — 2026.01</span>
+        <p>将 Doubao-seed（教师）蒸馏到 Qwen3.5-2B（学生），用 5 步思维链处理 17.5 万标注样本——十分之一成本，逼近教师一致性。</p>
+        <div class="work-metric"><span class="big">72.7%</span><span class="lbl">一致性 · 推理成本仅 1/10</span></div>
+        <div class="work-chips"><span class="chip">蒸馏</span><span class="chip">CoT</span><span class="chip">17.5k 标注</span></div>
+      </div>
+
+      <div class="work-card" data-reveal data-od-id="work-qg">
+        <div class="work-head"><span class="work-num">P · 04</span><span class="work-org">课程项目</span></div>
+        <h3>知识检索 C 语言<em>题目生成</em></h3>
+        <span class="work-meta">2023.12 — 2024.06 · RAG + LoRA</span>
+        <p>BGE-M3 多路检索喂给 LoRA 微调的 Qwen2.5-14B 生成器，对生成题目做思维链/模式思维链双重验证，用于 C 语言练习。</p>
+        <div class="work-metric"><span class="big">2×</span><span class="lbl">验证 · CoT + PoT 双路径</span></div>
+        <div class="work-chips"><span class="chip">BGE-M3</span><span class="chip">LoRA</span><span class="chip">Qwen2.5-14B</span><span class="chip">CoT/PoT</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ IV. PUBLICATIONS ============ -->
+<section id="papers" data-od-id="papers">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">IV.</span>
+      <span class="meta-grp"><span>论文 / 精选</span><span class="dot-mark">•</span><span><b>已发表与在审</b></span></span>
+      <span>004 / 008</span>
+    </div>
+    <div class="section-header">
+      <span class="label" data-reveal>精选论文与预印本 <span class="ix">· Nº 04</span></span>
+      <h2 class="display" data-reveal>把<em>想法</em>写成<em>论证</em>的地方<span class="dot">.</span></h2>
+    </div>
+    <div class="pubs">
+
+      <div class="pub-row" data-reveal data-od-id="pub-i">
+        <span class="pub-roman">i.</span>
+        <div class="pub-body">
+          <h3>Critic Rule Induction: Improving Temporal Knowledge Graph Forecasting with Generator–Critic Language Models.</h3>
+          <div class="pub-authors">宁英松 等</div>
+          <p class="pub-abstract">一个对抗式规则归纳框架：生成器 LM 提出时序规则，判别器 LM 验证，二者联合 refine 在 TKG 基准上的归纳预测。</p>
+        </div>
+        <div class="pub-side">
+          <span class="pub-venue">ACL 2026</span>
+          <span class="pub-status accepted">已录用</span>
+          <span class="pub-role">第一作者</span>
+        </div>
+      </div>
+
+      <div class="pub-row" data-reveal data-od-id="pub-ii">
+        <span class="pub-roman">ii.</span>
+        <div class="pub-body">
+          <h3>DLTKG: Denoising Logic-based Temporal Knowledge Graph Reasoning.</h3>
+          <div class="pub-authors">宁英松 等（共同作者）</div>
+          <p class="pub-abstract">在历史演化路径上做基于扩散的去噪，为时序推理产生更干净的逻辑轨迹。</p>
+        </div>
+        <div class="pub-side">
+          <span class="pub-venue">EMNLP</span>
+          <span class="pub-status accepted">已录用</span>
+          <span class="pub-role">共同作者</span>
+        </div>
+      </div>
+
+      <div class="pub-row" data-reveal data-od-id="pub-iii">
+        <span class="pub-roman">iii.</span>
+        <div class="pub-body">
+          <h3>Reasoning Along Temporal Paths: A Hybrid Transformer Architecture for Temporal Knowledge Graph Forecasting.</h3>
+          <div class="pub-authors">宁英松 等</div>
+          <p class="pub-abstract">带多跳推理路径和 attention-mixer 的混合 Transformer——在 GDELT 上 MRR 相比前 SOTA +20%。</p>
+        </div>
+        <div class="pub-side">
+          <span class="pub-venue">ACL · 投稿</span>
+          <span class="pub-status review">在审</span>
+          <span class="pub-role">第一作者</span>
+        </div>
+      </div>
+
+      <div class="pub-row" data-reveal data-od-id="pub-iv">
+        <span class="pub-roman">iv.</span>
+        <div class="pub-body">
+          <h3>The Control of Intelligent Building Robot Patrol Technology Based on Raspberry Pi.</h3>
+          <div class="pub-authors">宁英松 等</div>
+          <p class="pub-abstract">在树莓派巡检机器人上用卡尔曼滤波 + FAST-RCNN，整合感知、控制与调度于一体嵌入式系统。</p>
+        </div>
+        <div class="pub-side">
+          <span class="pub-venue">期刊</span>
+          <span class="pub-status">已发表</span>
+          <span class="pub-role">第一作者</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ V. LEDGER ============ -->
+<section id="ledger" data-od-id="ledger">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">V.</span>
+      <span class="meta-grp"><span>履历 / 学历与经历</span><span class="dot-mark">•</span><span><b>学习与工作过的地方</b></span></span>
+      <span>005 / 008</span>
+    </div>
+    <div class="section-header">
+      <span class="label" data-reveal>学历与经历 <span class="ix">· Nº 05</span></span>
+      <h2 class="display" data-reveal>一份简短的<em>学历</em>与<em>履历</em><span class="dot">.</span></h2>
+      <p class="cn-sub" data-reveal style="display:none"></p>
+    </div>
+    <div class="ledger-grid">
+
+      <div class="ledger-col" data-reveal>
+        <h4>学历 <span class="dot">•</span> Education</h4>
+        <div class="tl-item">
+          <span class="tl-when">2024.09 — 2027.06（预计）</span>
+          <h5>计算机科学 硕士</h5>
+          <span class="tl-org">东北大学 · 推荐免试（保研）</span>
+          <p>研究 LLM 记忆系统、检索、RL 后训练与时序知识图谱推理。</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-when">2020.09 — 2024.07</span>
+          <h5>计算机科学 学士</h5>
+          <span class="tl-org">沈阳建筑大学</span>
+          <p>本科阶段做巡检机器人、知识检索题目生成，以及早期 NLP 基础。</p>
+        </div>
+      </div>
+
+      <div class="ledger-col" data-reveal>
+        <h4>经历 <span class="dot">•</span> Experience</h4>
+        <div class="tl-item">
+          <span class="tl-when">2025.12 — 至今</span>
+          <h5>NLP 算法实习生</h5>
+          <span class="tl-org">百度 · 文心 App · 北京</span>
+          <p>负责长短时记忆模块：画像抽取、查询改写、混合检索、建议生成，以及 GRPO/GSPO 强化学习训练。</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-when">持续中</span>
+          <h5>开源与竞赛</h5>
+          <span class="tl-org">CCCC · CCGC · MCM/ICM</span>
+          <p>多项国家级奖项；在程序设计与数学建模竞赛中持续参与。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ VI. DISPATCHES ============ -->
+<section class="dispatches" id="dispatches" data-od-id="dispatches">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">VI.</span>
+      <span class="meta-grp"><span>动态 / 来自案头</span><span class="dot-mark">•</span><span><b>近期消息</b></span></span>
+      <span>006 / 008</span>
+    </div>
+    <div class="section-header">
+      <span class="label" data-reveal>近期动态 <span class="ix">· Nº 06</span></span>
+      <h2 class="display" data-reveal>来自<em>案头</em>的近况<span class="dot">.</span></h2>
+      <p class="cn-sub" data-reveal style="display:none"></p>
+    </div>
+    <div class="news-list">
+      <div class="news-row" data-reveal><span class="news-when">2026 · 05</span><span class="news-kind milestone">札记</span><span class="news-body">个人主页在 Atelier 重新上线——<em>就是这一页。</em></span></div>
+      <div class="news-row" data-reveal><span class="news-when">2026 · 04</span><span class="news-kind">论文</span><span class="news-body"><em>Critic Rule Induction</em> 被 <b>ACL 2026</b> 录用（第一作者）——一个带生成器-判别器 LM 的对抗式规则归纳框架。</span></div>
+      <div class="news-row" data-reveal><span class="news-when">2026 · 02</span><span class="news-kind work">工作</span><span class="news-body">在百度启动新项目：<b>基于 GRPO 的 SUG 模型优化</b>。</span></div>
+      <div class="news-row" data-reveal><span class="news-when">2025 · 12</span><span class="news-kind work">工作</span><span class="news-body">加入 <b>百度 / 文心 App</b>，任 NLP 算法实习生。</span></div>
+      <div class="news-row" data-reveal><span class="news-when">2025 · xx</span><span class="news-kind">论文</span><span class="news-body"><em>DLTKG</em> 被 <b>EMNLP</b> 录用（共同作者）——基于扩散的历史演化路径去噪。</span></div>
+      <div class="news-row" data-reveal><span class="news-when">2024 · 09</span><span class="news-kind milestone">里程碑</span><span class="news-body">通过推荐免试（保研）进入东北大学攻读硕士。</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VII. LAURELS ============ -->
+<section id="laurels" data-od-id="laurels">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">VII.</span>
+      <span class="meta-grp"><span>荣誉 / 奖项</span><span class="dot-mark">•</span><span><b>一路的几个</b></span></span>
+      <span>007 / 008</span>
+    </div>
+    <div class="section-header">
+      <span class="label" data-reveal>荣誉与奖项 <span class="ix">· Nº 07</span></span>
+      <h2 class="display" data-reveal>一路走来的几个<em>荣誉</em><span class="dot">.</span></h2>
+      <p class="cn-sub" data-reveal style="display:none"></p>
+    </div>
+    <div class="laurels-grid">
+      <div class="laurel" data-reveal data-od-id="laurel-1">
+        <span class="star">✦</span>
+        <div class="laurel-body">
+          <h5>全国一等奖 · 中国大学生计算机大赛</h5>
+          <p>连续三年获全国一等奖。</p>
+        </div>
+      </div>
+      <div class="laurel" data-reveal data-od-id="laurel-2">
+        <span class="star">✦</span>
+        <div class="laurel-body">
+          <h5>全国一等奖 · 中国大学生计算机博弈大赛</h5>
+          <p>连续三年获全国一等奖。</p>
+        </div>
+      </div>
+      <div class="laurel" data-reveal data-od-id="laurel-3">
+        <span class="star">✦</span>
+        <div class="laurel-body">
+          <h5>优胜奖 · 美国大学生数学建模竞赛</h5>
+          <p>MCM / ICM ——在开放问题上做跨学科数学建模。</p>
+        </div>
+      </div>
+      <div class="laurel" data-reveal data-od-id="laurel-4">
+        <span class="star">✦</span>
+        <div class="laurel-body">
+          <h5>沈阳市优秀学生</h5>
+          <p>沈阳市优秀学生 · 大学一等奖学金。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIII. CONTACT ============ -->
+<section class="cta" id="contact" data-od-id="cta">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">VIII.</span>
+      <span class="meta-grp"><span>联系 / 交流</span><span class="dot-mark">•</span><span><b>招聘合作欢迎</b></span></span>
+      <span>008 / 008</span>
+    </div>
+    <div class="cta-grid">
+      <div data-reveal>
+        <span class="label">开始一段对话 <span class="ix">· Nº 08</span></span>
+        <h2 class="display">关于<em>记忆、检索与强化学习</em>，随时欢迎交流<span class="dot">.</span></h2>
+        <p class="lead">无论是研究合作、实习沟通，还是对某篇论文的提问——门一直开着。邮箱是联系我最快的方式。</p>
+        <div class="cta-actions">
+          <a class="btn btn-primary" href="https://inrstning.github.io/files/Yingsong_Ning_CV.pdf" target="_blank" rel="noreferrer noopener">
+            下载简历（PDF）
+            <span class="arrow"><svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H8M19 5v11"/></svg></span>
+          </a>
+          <a class="email-pill" href="mailto:inrstning@gmail.com">
+            inrstning@gmail.com
+            <span class="arrow-circle">→</span>
+          </a>
+        </div>
+        <div class="cta-foot">
+          <span class="stamp">● 可联系</span>
+          <span>北京 · 沈阳</span>
+          <span style="margin-left:auto;">39.90° N · 116.40° E</span>
+        </div>
+      </div>
+      <div class="cta-art" data-reveal="right" data-od-id="cta-plate">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <span class="index-cta">Nº 08</span>
+        <svg viewBox="0 0 420 525" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
+          <defs>
+            <linearGradient id="ctaG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f3ecd8"/><stop offset="1" stop-color="#e3d8bc"/>
+            </linearGradient>
+          </defs>
+          <rect width="420" height="525" fill="url(#ctaG)"/>
+          <g stroke="#15140f" stroke-width="1" fill="none" opacity="0.35">
+            <path d="M60 120 Q210 60 360 120 T360 360 Q210 440 60 360 T60 120"/>
+            <circle cx="210" cy="240" r="80"/>
+            <circle cx="210" cy="240" r="130"/>
+          </g>
+          <text x="210" y="260" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-weight="500" font-size="120" fill="#15140f">Mail</text>
+          <text x="210" y="300" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="26" fill="#ed6f5c" letter-spacing="6">来信</text>
+          <g font-family="JetBrains Mono, monospace" font-size="9" fill="#5a5448">
+            <text x="22" y="470">↳ drop a line</text>
+            <text x="22" y="488">memory · retrieval · RL</text>
+          </g>
+        </svg>
+        <div class="ribbon">YN &nbsp;·&nbsp; FIN.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer data-od-id="footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand"><span class="brand-mark">宁</span><span>Yingsong Ning</span></a>
+        <p>研究大语言模型 <b>记忆、检索与强化学习</b> 的 NLP 研究者。东北大学硕士在读；百度文心实习生。ACL 2026 一作。</p>
+        <a class="foot-cta" href="https://inrstning.github.io/files/Yingsong_Ning_CV.pdf" target="_blank" rel="noreferrer noopener">下载简历 <span class="meta">PDF · EN · 2026</span></a>
+      </div>
+      <div class="foot-col">
+        <h5>站点</h5>
+        <ul>
+          <li><a href="#pursuits">研究方向</a></li>
+          <li><a href="#studio">项目</a></li>
+          <li><a href="#papers">论文</a></li>
+          <li><a href="#ledger">履历</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>工作</h5>
+        <ul>
+          <li><a href="https://github.com/Inrstning" target="_blank" rel="noreferrer noopener">GitHub · @Inrstning</a></li>
+          <li><a href="mailto:inrstning@gmail.com">inrstning@gmail.com</a></li>
+          <li><a href="https://inrstning.github.io/files/Yingsong_Ning_CV.pdf" target="_blank" rel="noreferrer noopener">简历（PDF · EN）</a></li>
+          <li><a href="https://scholar.google.com" target="_blank" rel="noreferrer noopener">Scholar · 敬请期待</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>版权页</h5>
+        <ul>
+          <li><span style="color:var(--ink-mute);">字体 · Inter Tight / Playfair</span></li>
+          <li><span style="color:var(--ink-mute);">构建 · Atelier Zero</span></li>
+          <li><span style="color:var(--ink-mute);">更新 · MMXXVI · 五月</span></li>
+          <li><a href="/">English version →</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span><span class="pulse"></span>● <b style="color:var(--ink);">宁英松 Yingsong Ning</b> · © 2026 · Vol. 01 / 第 26 期</span>
+      <span class="right">
+        <span>北京 · 沈阳</span>
+        <span>39.90° N · 116.40° E</span>
+        <span style="color:var(--coral);">♥ MMXXVI</span>
+      </span>
+    </div>
+    <div class="foot-mega">
+      <div class="word" data-reveal="rise-lg">宁英松<em>。</em></div>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<script>
+  /* Scroll-reveal observer */
+  (function () {
+    var elements = document.querySelectorAll('[data-reveal]:not([data-revealed])');
+    if (!elements.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      for (var i = 0; i < elements.length; i++) elements[i].dataset.revealed = 'true';
+      return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (!entries[i].isIntersecting) continue;
+        entries[i].target.dataset.revealed = 'true';
+        observer.unobserve(entries[i].target);
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    for (var j = 0; j < elements.length; j++) observer.observe(elements[j]);
+  })();
+
+  /* Headroom-style sticky header */
+  (function () {
+    var nav = document.querySelector('header.nav');
+    if (!nav) return;
+    var SHOW_TOP = 100, DELTA = 6, lastY = window.scrollY || 0;
+    function onScroll() {
+      var y = window.scrollY || 0, d = y - lastY;
+      if (y <= SHOW_TOP) nav.classList.remove('is-hidden');
+      else if (d > DELTA) nav.classList.add('is-hidden');
+      else if (d < -DELTA) nav.classList.remove('is-hidden');
+      lastY = y;
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  /* Bilingual toggle — toggles a [data-lang="zh"] state that swaps
+     emphasis from EN display copy to CN. Default EN per brand spec
+     (italic emphasis prefers English Playfair). */
+  (function () {
+    var buttons = document.querySelectorAll('.lang-toggle button');
+    if (!buttons.length) return;
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        buttons.forEach(function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+        document.documentElement.setAttribute('data-lang', btn.getAttribute('data-lang'));
+      });
+    });
+  })();
+</script>
+</body>
+</html>
