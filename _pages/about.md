@@ -221,11 +221,17 @@ redirect_from:
     <article class="pub reveal" data-stagger="4">
       <div class="pub__no">iv.</div>
       <div>
-        <h3 class="pub__title">The Control of Intelligent Building Robot Patrol Technology Based on Raspberry Pi.</h3>
+        <h3 class="pub__title"><a href="https://dl.acm.org/doi/10.1145/3584376.3584422" target="_blank" rel="noreferrer noopener">The Control of Intelligent Building Robot Patrol Technology Based on Raspberry Pi.</a></h3>
         <p class="pub__authors"><span class="me">Yingsong Ning</span>, et al.</p>
         <p class="pub__abstract">Kalman filtering + FAST-RCNN on a Raspberry Pi patrol robot, integrating perception, control, and dispatch.</p>
+        <div class="pub-links">
+          <a href="https://dl.acm.org/doi/10.1145/3584376.3584422" target="_blank" rel="noreferrer noopener" class="pub-link-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>ACM Digital Library</span>
+          </a>
+        </div>
       </div>
-      <div class="pub__venue"><strong>Published</strong><span>Journal</span><span class="role">First author</span></div>
+      <div class="pub__venue"><strong>RICAI 2022</strong><span>Conference</span><span class="role">First author</span></div>
     </article>
   </div>
 </section>

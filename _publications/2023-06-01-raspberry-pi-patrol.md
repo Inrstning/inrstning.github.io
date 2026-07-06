@@ -5,8 +5,9 @@ category: conferences
 permalink: /publication/2023-06-01-raspberry-pi-patrol
 excerpt: 'A Raspberry-Pi-based intelligent security patrol robot for construction sites. Integrates STM32 and multi-modal sensors; uses Kalman filtering for state estimation and FAST-RCNN for hazard detection.'
 date: 2023-06-01
-venue: 'Published'
-citation: 'Yingsong Ning, et al. "The Control of Intelligent Building Robot Patrol Technology Based on Raspberry Pi."'
+venue: 'RICAI 2022'
+paperurl: 'https://dl.acm.org/doi/10.1145/3584376.3584422'
+citation: 'Yingsong Ning, Yifei Chen, Zixuan Xu, Wangran Ma, Shoujin Wang, and Shiyu Zhao. "The Control of Intelligent Building Robot Patrol Technology Based on Raspberry Pi." RICAI 2022.'
 ---
 
 **Role:** First author.
