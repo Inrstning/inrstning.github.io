@@ -114,9 +114,9 @@ redirect_from:
       <div class="dispatch__text">Joined <strong>Baidu / Wenxin App</strong> as an NLP algorithm intern.</div>
     </div>
     <div class="dispatch reveal" data-stagger="5">
-      <div class="dispatch__date">2025 · xx</div>
+      <div class="dispatch__date">2025 · 09</div>
       <div class="dispatch__tag tag--paper">Paper</div>
-      <div class="dispatch__text"><em>DLTKG</em> accepted to <strong>EMNLP</strong> (co-author) — diffusion-based denoising over historical evolution paths.</div>
+      <div class="dispatch__text"><a href="https://aclanthology.org/2025.findings-emnlp.1017/" target="_blank" rel="noreferrer noopener"><em>DLTKG</em></a> accepted to <strong>EMNLP 2025</strong> (co-author) — diffusion-based denoising over historical evolution paths.</div>
     </div>
     <div class="dispatch reveal" data-stagger="6">
       <div class="dispatch__date">2024 · 09</div>
@@ -195,11 +195,17 @@ redirect_from:
     <article class="pub reveal" data-stagger="2">
       <div class="pub__no">ii.</div>
       <div>
-        <h3 class="pub__title">DLTKG: Denoising Logic-based Temporal Knowledge Graph Reasoning.</h3>
+        <h3 class="pub__title"><a href="https://aclanthology.org/2025.findings-emnlp.1017/" target="_blank" rel="noreferrer noopener">DLTKG: Denoising Logic-based Temporal Knowledge Graph Reasoning.</a></h3>
         <p class="pub__authors">et al., <span class="me">Yingsong Ning</span> (co-author).</p>
         <p class="pub__abstract">Diffusion-based denoising over historical evolution paths, producing cleaner logical traces for temporal reasoning.</p>
+        <div class="pub-links">
+          <a href="https://aclanthology.org/2025.findings-emnlp.1017/" target="_blank" rel="noreferrer noopener" class="pub-link-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>ACL Anthology</span>
+          </a>
+        </div>
       </div>
-      <div class="pub__venue"><strong>EMNLP</strong><span>Accepted</span><span class="role">Co-author</span></div>
+      <div class="pub__venue"><strong>EMNLP 2025</strong><span>Accepted</span><span class="role">Co-author</span></div>
     </article>
 
     <article class="pub reveal" data-stagger="3">

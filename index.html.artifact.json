@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "deploy/inrstning.github.io/index.html",
+  "entry": "deploy/inrstning.github.io/index.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-07-06T10:43:59.726Z",
+  "updatedAt": "2026-07-06T10:43:59.726Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

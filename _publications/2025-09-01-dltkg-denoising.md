@@ -5,8 +5,9 @@ category: conferences
 permalink: /publication/2025-09-01-dltkg-denoising
 excerpt: 'Models temporal knowledge graph reasoning as a noise-injection / denoising diffusion process. Conditions denoising on Historical Evolution Paths (HEPs) of relations, and fuses historical entities into fuzzy entities for better generalization and interpretability.'
 date: 2025-09-01
-venue: 'EMNLP (Accepted)'
-citation: 'DLTKG: Denoising Logic-based Temporal Knowledge Graph Reasoning. EMNLP.'
+venue: 'Findings of EMNLP 2025 (Accepted)'
+paperurl: 'https://aclanthology.org/2025.findings-emnlp.1017/'
+citation: 'Xiaoke Wang, Fu Zhang, Jingwei Cheng, Yiwen Chi, Jiashun Peng, and Yingsong Ning. "DLTKG: Denoising Logic-based Temporal Knowledge Graph Reasoning." Findings of EMNLP 2025.'
 ---
 
 **Role:** Co-author.
