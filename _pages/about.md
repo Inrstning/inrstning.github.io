@@ -182,6 +182,12 @@ redirect_from:
         <h3 class="pub__title"><a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener">Critic Rule Induction: Improving Temporal Knowledge Graph Forecasting with Generator–Critic Language Models.</a></h3>
         <p class="pub__authors"><span class="me">Yingsong Ning</span>, et al.</p>
         <p class="pub__abstract">An adversarial rule-induction framework where a generator LM proposes temporal rules and a critic LM verifies them, jointly refining inductive forecasts on TKG benchmarks.</p>
+        <div class="pub-links">
+          <a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener" class="pub-link-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>ACL Anthology</span>
+          </a>
+        </div>
       </div>
       <div class="pub__venue"><strong>ACL 2026</strong><span>Accepted</span><span class="role">First author</span></div>
     </article>

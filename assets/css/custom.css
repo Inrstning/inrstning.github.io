@@ -586,6 +586,41 @@ html[lang="zh"] .hero::after, body.lang-zh .hero::after { content: "二〇二六
 .pub__venue strong { display: block; color: var(--sienna); font-size: 13px; letter-spacing: 0.18em; font-weight: 600; margin-bottom: 0.3rem; }
 .pub__venue .role { display: block; color: var(--ink-mute); font-size: 10px; margin-top: 0.4rem; }
 
+.pub-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.pub-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--paper-edge);
+  background: transparent;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: all 0.18s ease;
+  line-height: 1.2;
+}
+.pub-link-btn:hover {
+  border-color: var(--sienna);
+  color: var(--sienna);
+  background: rgba(217, 85, 54, 0.05);
+}
+.pub-link-btn svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
 /* =============================================================
    PROJECTS — bento-style asymmetric grid
    ============================================================= */

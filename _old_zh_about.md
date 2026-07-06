@@ -172,6 +172,12 @@ redirect_from:
         <h3 class="pub__title"><a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener">Critic Rule Induction：基于生成器–判别器 LLM 的时序知识图谱预测改进。</a></h3>
         <p class="pub__authors"><span class="me">宁英松</span> 等。</p>
         <p class="pub__abstract">生成器 LM 归纳时序规则，判别器 LM 校验并反馈，联合优化对 TKG 基准的归纳式预测。</p>
+        <div class="pub-links">
+          <a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener" class="pub-link-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>ACL Anthology</span>
+          </a>
+        </div>
       </div>
       <div class="pub__venue"><strong>ACL 2026</strong><span>已接收</span><span class="role">第一作者</span></div>
     </article>
