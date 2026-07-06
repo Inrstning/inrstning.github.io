@@ -95,7 +95,7 @@ redirect_from:
     <div class="dispatch reveal" data-stagger="2">
       <div class="dispatch__date">2026 · 04</div>
       <div class="dispatch__tag tag--paper">论文</div>
-      <div class="dispatch__text">论文 <em>Critic Rule Induction</em> 被 <strong>ACL 2026</strong> 接收（第一作者）— 生成器–判别器 LLM 对抗式规则归纳。</div>
+      <div class="dispatch__text">论文 <a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener"><em>Critic Rule Induction</em></a> 被 <strong>ACL 2026</strong> 接收（第一作者）— 生成器–判别器 LLM 对抗式规则归纳。</div>
     </div>
     <div class="dispatch reveal" data-stagger="3">
       <div class="dispatch__date">2026 · 02</div>
@@ -169,7 +169,7 @@ redirect_from:
     <article class="pub reveal" data-stagger="1">
       <div class="pub__no">壹.</div>
       <div>
-        <h3 class="pub__title">Critic Rule Induction：基于生成器–判别器 LLM 的时序知识图谱预测改进。</h3>
+        <h3 class="pub__title"><a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener">Critic Rule Induction：基于生成器–判别器 LLM 的时序知识图谱预测改进。</a></h3>
         <p class="pub__authors"><span class="me">宁英松</span> 等。</p>
         <p class="pub__abstract">生成器 LM 归纳时序规则，判别器 LM 校验并反馈，联合优化对 TKG 基准的归纳式预测。</p>
       </div>

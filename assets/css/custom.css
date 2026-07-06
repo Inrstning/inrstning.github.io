@@ -465,6 +465,16 @@ html[lang="zh"] .hero::after, body.lang-zh .hero::after { content: "二〇二六
 }
 .dispatch__text em { font-family: var(--f-display); font-style: italic; color: var(--ink); font-weight: 500; }
 .dispatch__text strong { font-weight: 600; color: var(--ink); }
+.dispatch__text a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.dispatch__text a:hover {
+  color: var(--sienna);
+  border-bottom-color: var(--sienna);
+}
 
 /* =============================================================
    LEDGER — timeline (education, experience) as left-rule entries
@@ -545,6 +555,16 @@ html[lang="zh"] .hero::after, body.lang-zh .hero::after { content: "二〇二六
   letter-spacing: -0.015em;
   color: var(--ink);
   margin: 0 0 0.5rem;
+}
+.pub__title a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.pub__title a:hover {
+  color: var(--sienna);
+  border-bottom-color: var(--sienna);
 }
 .pub__authors {
   font-family: var(--f-serif);

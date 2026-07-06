@@ -101,7 +101,7 @@ redirect_from:
     <div class="dispatch reveal" data-stagger="2">
       <div class="dispatch__date">2026 · 04</div>
       <div class="dispatch__tag tag--paper">Paper</div>
-      <div class="dispatch__text"><em>Critic Rule Induction</em> accepted to <strong>ACL 2026</strong> (first author) — an adversarial rule-induction framework with generator–critic LMs.</div>
+      <div class="dispatch__text"><a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener"><em>Critic Rule Induction</em></a> accepted to <strong>ACL 2026</strong> (first author) — an adversarial rule-induction framework with generator–critic LMs.</div>
     </div>
     <div class="dispatch reveal" data-stagger="3">
       <div class="dispatch__date">2026 · 02</div>
@@ -179,7 +179,7 @@ redirect_from:
     <article class="pub reveal" data-stagger="1">
       <div class="pub__no">i.</div>
       <div>
-        <h3 class="pub__title">Critic Rule Induction: Improving Temporal Knowledge Graph Forecasting with Generator–Critic Language Models.</h3>
+        <h3 class="pub__title"><a href="https://aclanthology.org/2026.findings-acl.1471/" target="_blank" rel="noreferrer noopener">Critic Rule Induction: Improving Temporal Knowledge Graph Forecasting with Generator–Critic Language Models.</a></h3>
         <p class="pub__authors"><span class="me">Yingsong Ning</span>, et al.</p>
         <p class="pub__abstract">An adversarial rule-induction framework where a generator LM proposes temporal rules and a critic LM verifies them, jointly refining inductive forecasts on TKG benchmarks.</p>
       </div>
